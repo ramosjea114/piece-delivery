@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>PHP Price Cascade Calculator</title>
+<title>PHP Price Calculator</title>
 
 <style>
     body {
@@ -68,58 +68,21 @@
 <div class="container">
     <h2>PHP Price Calculator</h2>
 
+    <!-- Base Price -->
     <label>Textbox 1 – Base Price</label>
     <div class="input-group">
         <span class="peso">₱</span>
-        <input type="number" id="t1" step="0.01" oninput="calculate()" placeholder="Enter price">
+        <input
+            type="number"
+            id="t1"
+            step="0.01"
+            oninput="calculate()"
+            placeholder="Enter price"
+        >
     </div>
 
-<!--
-    <label>Textbox 2 – x 0.80</label>
-    <div class="input-group">
-        <span class="peso">₱</span>
-        <input type="number" id="t2" readonly>
-    </div>
-
-    <label>Textbox 3 – x 0.95</label>
-    <div class="input-group">
-        <span class="peso">₱</span>
-        <input type="number" id="t3" readonly>
-    </div>
-
-    <label>Textbox 4 – x 0.95</label>
-    <div class="input-group">
-        <span class="peso">₱</span>
-        <input type="number" id="t4" readonly>
-    </div>
-
-    <label>Textbox 5 – x 0.95</label>
-    <div class="input-group">
-        <span class="peso">₱</span>
-        <input type="number" id="t5" readonly>
-    </div>
-
-    <label>Textbox 6 – x 0.95</label>
-    <div class="input-group">
-        <span class="peso">₱</span>
-        <input type="number" id="t6" readonly>
-    </div>
-
-    <label>Textbox 7 – x 0.95</label>
-    <div class="input-group">
-        <span class="peso">₱</span>
-        <input type="number" id="t7" readonly>
-    </div>
-
-    <label>Textbox 8 – x 0.95</label>
-    <div class="input-group">
-        <span class="peso">₱</span>
-        <input type="number" id="t8" readonly>
-    </div>
-
--->
-    
-    <label>Textbox 9 – x 0.95</label>
+    <!-- Final Computed Price -->
+    <label>Textbox 9 – Final Price</label>
     <div class="input-group">
         <span class="peso">₱</span>
         <input type="number" id="t9" readonly>
@@ -132,24 +95,11 @@ function round2(value) {
 }
 
 function calculate() {
-    let t1 = parseFloat(document.getElementById("t1").value) || 0;
+    const t1 = parseFloat(document.getElementById("t1").value) || 0;
 
-    let t2 = round2(t1 * 0.8);
-    let t3 = round2(t2 * 0.95);
-    let t4 = round2(t3 * 0.95);
-    let t5 = round2(t4 * 0.95);
-    let t6 = round2(t5 * 0.95);
-    let t7 = round2(t6 * 0.95);
-    let t8 = round2(t7 * 0.95);
-    let t9 = round2(t1 * 0.558669836875);
+    // Combined cascade factor
+    const t9 = round2(t1 * 0.558669836875);
 
-    document.getElementById("t2").value = t2.toFixed(2);
-    document.getElementById("t3").value = t3.toFixed(2);
-    document.getElementById("t4").value = t4.toFixed(2);
-    document.getElementById("t5").value = t5.toFixed(2);
-    document.getElementById("t6").value = t6.toFixed(2);
-    document.getElementById("t7").value = t7.toFixed(2);
-    document.getElementById("t8").value = t8.toFixed(2);
     document.getElementById("t9").value = t9.toFixed(2);
 }
 </script>
