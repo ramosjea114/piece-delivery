@@ -115,6 +115,12 @@
         <span class="peso">₱</span>
         <input type="number" id="t8" readonly>
     </div>
+
+    <label>Textbox 9 – x 0.95</label>
+    <div class="input-group">
+        <span class="peso">₱</span>
+        <input type="number" id="t9" readonly>
+    </div>
 </div>
 
 <script>
@@ -132,6 +138,7 @@ function calculate() {
     let t6 = round2(t5 * 0.95);
     let t7 = round2(t6 * 0.95);
     let t8 = round2(t7 * 0.95);
+    let t9 = round2(t8 * 0.95);
 
     document.getElementById("t2").value = t2.toFixed(2);
     document.getElementById("t3").value = t3.toFixed(2);
@@ -140,6 +147,7 @@ function calculate() {
     document.getElementById("t6").value = t6.toFixed(2);
     document.getElementById("t7").value = t7.toFixed(2);
     document.getElementById("t8").value = t8.toFixed(2);
+    document.getElementById("t9").value = t9.toFixed(2);
 }
 </script>
 
