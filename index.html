@@ -60,13 +60,36 @@
     input[readonly] {
         background-color: #f0f0f0;
     }
+
+    .radio-group {
+        margin-top: 10px;
+    }
+
+    .radio-group label {
+        display: inline-block;
+        margin-right: 15px;
+        font-size: 14px;
+    }
 </style>
 </head>
 
-<body>
+<body onload="calculate()">
 
 <div class="container">
     <h2>PHP Price Calculator</h2>
+
+    <!-- Formula Selector -->
+    <label>Select Formula</label>
+    <div class="radio-group">
+        <label>
+            <input type="radio" name="formula" value="mycar" checked onchange="calculate()">
+            MyCar
+        </label>
+        <label>
+            <input type="radio" name="formula" value="expolink" onchange="calculate()">
+            ExpoLink
+        </label>
+    </div>
 
     <!-- Base Price -->
     <label>Textbox 1 – Base Price</label>
@@ -81,7 +104,7 @@
         >
     </div>
 
-    <!-- Final Computed Price -->
+    <!-- Final Price -->
     <label>Textbox 9 – Final Price</label>
     <div class="input-group">
         <span class="peso">₱</span>
@@ -94,12 +117,30 @@ function round2(value) {
     return Math.round(value * 100) / 100;
 }
 
+function getSelectedFormula() {
+    const radios = document.getElementsByName("formula");
+    for (let r of radios) {
+        if (r.checked) return r.value;
+    }
+    return "mycar";
+}
+
 function calculate() {
     const t1 = parseFloat(document.getElementById("t1").value) || 0;
+    const selected = getSelectedFormula();
 
-    // Combined cascade factor
-    const t9 = round2(t1 * 0.558669836875);
+    let t9 = 0;
 
+    if (selected === "mycar") {
+        // MyCar formula
+        t9 = t1 * 0.558669836875;
+    } 
+    else if (selected === "expolink") {
+        // ExpoLink formula
+        t9 = t1 * 0.5 * 0.9;
+    }
+
+    t9 = round2(t9);
     document.getElementById("t9").value = t9.toFixed(2);
 }
 </script>
