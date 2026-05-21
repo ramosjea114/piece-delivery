@@ -4,71 +4,119 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>PHP Price Calculator</title>
+<title>Price Calculator</title>
 
 <style>
+    /* ✅ FIX: global box sizing prevents overflow */
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
     body {
-        font-family: Arial, sans-serif;
-        background: #f4f6f8;
-        padding: 16px;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #eef2f6;
         margin: 0;
+        padding: 16px;
     }
 
     .container {
         max-width: 420px;
+        width: 100%;
         margin: auto;
         background: #ffffff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        padding: 24px;
+        border-radius: 10px;
+        border: 1px solid #dce1e7;
     }
 
     h2 {
-        text-align: center;
+        text-align: left;
+        font-size: 20px;
         margin-bottom: 20px;
+        color: #1f2937;
     }
 
     label {
         display: block;
-        margin-top: 12px;
-        margin-bottom: 4px;
-        font-size: 14px;
+        margin-top: 16px;
+        margin-bottom: 6px;
+        font-size: 13px;
+        color: #4b5563;
+        font-weight: 600;
     }
 
     .input-group {
         position: relative;
+        width: 100%;
     }
 
     .peso {
         position: absolute;
-        left: 10px;
+        left: 12px;
         top: 50%;
         transform: translateY(-50%);
-        font-weight: bold;
-        color: #555;
+        color: #6b7280;
+        font-size: 14px;
+        pointer-events: none;
     }
 
     input[type="number"] {
         width: 100%;
-        padding: 10px 10px 10px 26px;
-        font-size: 16px;
+        padding: 10px 12px 10px 30px;
+        font-size: 15px;
         border-radius: 6px;
-        border: 1px solid #ccc;
-        box-sizing: border-box;
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        transition: border 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="number"]:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
     }
 
     input[readonly] {
-        background-color: #f0f0f0;
+        background-color: #f9fafb;
+        font-weight: 600;
+        color: #111827;
     }
 
+    /* ✅ Corporate radio toggle */
     .radio-group {
-        margin-top: 10px;
+        display: flex;
+        width: 100%;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        overflow: hidden;
+        margin-top: 6px;
     }
 
     .radio-group label {
-        display: inline-block;
-        margin-right: 15px;
+        flex: 1;
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .radio-group input {
+        display: none;
+    }
+
+    .radio-group span {
+        display: block;
+        text-align: center;
+        padding: 10px;
         font-size: 14px;
+        color: #374151;
+        background: #f9fafb;
+    }
+
+    .radio-group input:checked + span {
+        background: #2563eb;
+        color: #ffffff;
+        font-weight: 600;
     }
 </style>
 </head>
@@ -76,23 +124,23 @@
 <body onload="calculate()">
 
 <div class="container">
-    <h2>PHP Price Calculator</h2>
+    <h2>Price Calculator</h2>
 
     <!-- Formula Selector -->
-    <label>Select Formula</label>
+    <label>Calculation Type</label>
     <div class="radio-group">
         <label>
             <input type="radio" name="formula" value="mycar" checked onchange="calculate()">
-            MyCar
+            <span>MyCar</span>
         </label>
         <label>
             <input type="radio" name="formula" value="expolink" onchange="calculate()">
-            ExpoLink
+            <span>ExpoLink</span>
         </label>
     </div>
 
     <!-- Base Price -->
-    <label>Textbox 1 – Base Price</label>
+    <label>Base Price</label>
     <div class="input-group">
         <span class="peso">₱</span>
         <input
@@ -100,12 +148,12 @@
             id="t1"
             step="0.01"
             oninput="calculate()"
-            placeholder="Enter price"
+            placeholder="Enter amount"
         >
     </div>
 
     <!-- Final Price -->
-    <label>Textbox 9 – Final Price</label>
+    <label>Final Price</label>
     <div class="input-group">
         <span class="peso">₱</span>
         <input type="number" id="t9" readonly>
@@ -132,11 +180,9 @@ function calculate() {
     let t9 = 0;
 
     if (selected === "mycar") {
-        // MyCar formula
         t9 = t1 * 0.558669836875;
     } 
     else if (selected === "expolink") {
-        // ExpoLink formula
         t9 = t1 * 0.5 * 0.9;
     }
 
