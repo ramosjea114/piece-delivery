@@ -1,0 +1,74 @@
+Phase 10 — Intelligent Overlay Placement
+
+Objective
+
+Improve spatial placement of translations.
+
+Placement Priority
+
+Attempt:
+
+1. BELOW
+2. ABOVE
+3. RIGHT
+4. LEFT
+5. FALLBACK
+
+Choose the first viable location.
+
+Consider
+
+* monitor boundaries
+* screen boundaries
+* available space
+* other translation overlays
+* font size
+* translation dimensions
+* DPI scaling
+
+Collision Avoidance
+
+Translation boxes should avoid unnecessary overlap with other translation boxes.
+
+Implement a deterministic placement algorithm.
+
+Do not use an LLM for geometry.
+
+Multi-Monitor
+
+Support:
+
+* multiple monitors
+* negative monitor coordinates
+* different resolutions
+* monitor-specific coordinate spaces
+
+DPI
+
+Do not assume 100% Windows scaling.
+
+Design geometry handling so 100%, 125%, 150%, etc. can be tested.
+
+Tests
+
+Create unit tests for:
+
+* below available
+* below unavailable
+* above available
+* side placement
+* screen edge
+* negative coordinates
+* multiple overlays
+* collisions
+* DPI conversion
+
+Completion
+
+Run tests.
+
+Perform manual tests if possible.
+
+Update PROJECT_STATE.md.
+
+Document known Windows-specific limitations.
