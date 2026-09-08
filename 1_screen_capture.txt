@@ -1,0 +1,34 @@
+Windows screen
+      ↓
+mss
+      ↓
+NumPy/OpenCV frame
+      ↓
+display/save/test
+
+Implement Milestone 1: local screen capture.
+
+Read:
+- PROJECT_SPEC.md
+- ARCHITECTURE.md
+- PROJECT_STATE.md
+
+Implement:
+- capture/screen_capture.py
+- configurable monitor selection
+- screenshot acquisition using mss
+- conversion to OpenCV-compatible format
+- basic FPS configuration
+- clean resource handling
+
+Create a simple test/demo that captures the selected monitor and proves that frames are being received.
+
+Do not implement OCR, translation, overlay, or LLM integration.
+
+Acceptance criteria:
+1. Application starts.
+2. A monitor can be selected.
+3. Frames are captured locally.
+4. No image leaves the machine.
+5. Test/demo succeeds.
+6. Update PROJECT_STATE.md.
