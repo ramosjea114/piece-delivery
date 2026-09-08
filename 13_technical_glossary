@@ -1,0 +1,70 @@
+Phase 13 — Technical Glossary
+
+Objective
+
+Add a local terminology glossary to improve translation consistency.
+
+Example
+
+glossary:
+  変更管理: "Management of Change (MOC)"
+  プロセス安全: "Process Safety"
+  危険源: "Hazard"
+  安全計装システム: "Safety Instrumented System (SIS)"
+  緊急遮断: "Emergency Shutdown (ESD)"
+
+Requirements
+
+Create:
+
+translation/
+└── glossary.py
+
+Support:
+
+* local YAML glossary
+* exact matches
+* case-insensitive English matching where appropriate
+* glossary version
+* configurable glossary path
+
+LLM Integration
+
+The glossary should influence translation without forcing unnatural translations.
+
+For example:
+
+変更管理
+
+should prefer:
+
+Management of Change (MOC)
+
+rather than generic alternatives.
+
+Cache
+
+Changing the glossary must change the cache version/key.
+
+Privacy
+
+Glossary remains local.
+
+Do not synchronize it remotely.
+
+Tests
+
+Test:
+
+* glossary loading
+* missing glossary
+* exact matches
+* versioning
+* cache invalidation
+* translation prompt construction
+
+Completion
+
+Run tests.
+
+Update PROJECT_STATE.md.
