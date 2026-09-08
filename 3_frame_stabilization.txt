@@ -1,0 +1,76 @@
+Phase 03 — Frame Stabilization
+
+Read First
+
+Read:
+
+* PROJECT_SPEC.md
+* ARCHITECTURE.md
+* PROJECT_STATE.md
+* capture implementation
+* change detection implementation
+
+Objective
+
+Prevent transient screen changes from triggering OCR repeatedly.
+
+Desired behavior:
+
+Change detected
+      ↓
+Collect frames
+      ↓
+Compare successive frames
+      ↓
+Stable?
+   ┌──┴──┐
+  NO    YES
+  ↓      ↓
+wait   emit frame
+
+Requirements
+
+Create:
+
+detection/
+└── frame_stabilizer.py
+
+Support:
+
+* minimum stable frames
+* stability threshold
+* maximum stabilization wait
+* reset when major changes occur
+
+The stabilizer should be independent of OCR and translation.
+
+Example
+
+A PowerPoint animation may produce:
+
+Frame 1 ≠ Frame 2
+Frame 2 ≠ Frame 3
+Frame 3 ≈ Frame 4
+Frame 4 ≈ Frame 5
+
+Only after sufficient stability should a frame be emitted.
+
+Tests
+
+Test:
+
+* immediately stable frames
+* continuously changing frames
+* stabilization after change
+* timeout
+* reset behavior
+
+Tests must be deterministic.
+
+Completion
+
+Run tests.
+
+Update PROJECT_STATE.md.
+
+Do not implement OCR.
