@@ -32,3 +32,104 @@ Acceptance criteria:
 4. No image leaves the machine.
 5. Test/demo succeeds.
 6. Update PROJECT_STATE.md.
+
+Phase 01 — Local Screen Capture
+
+Read First
+
+Read:
+
+* PROJECT_SPEC.md
+* ARCHITECTURE.md
+* PROJECT_STATE.md
+
+Implement only this milestone.
+
+Objective
+
+Implement reliable local Windows screen capture using mss.
+
+Pipeline:
+
+Windows Desktop
+      ↓
+mss
+      ↓
+NumPy frame
+      ↓
+OpenCV-compatible image
+
+Requirements
+
+Implement:
+
+capture/
+└── screen_capture.py
+
+Create a reusable screen capture class.
+
+It must support:
+
+* monitor enumeration
+* monitor selection
+* configurable monitor index
+* frame acquisition
+* configurable capture FPS
+* clean shutdown
+* resolution reporting
+* monitor geometry reporting
+
+Do not perform OCR.
+
+Do not perform translation.
+
+Do not send frames anywhere.
+
+Demo
+
+Create a minimal demonstration that:
+
+1. Lists available monitors.
+2. Selects a configured monitor.
+3. Captures frames.
+4. Reports FPS and dimensions.
+5. Allows clean termination.
+
+If practical, provide a simple debug visualization, but do not build the final GUI yet.
+
+Tests
+
+Test:
+
+* monitor enumeration
+* frame acquisition
+* frame dimensions
+* invalid monitor handling
+* clean shutdown
+
+Do not require a physical second monitor for automated tests.
+
+Use mocks where appropriate.
+
+Privacy
+
+Screenshots must remain in memory.
+
+Do not write captured frames to disk unless explicitly running a debug test that is clearly marked as such.
+
+Do not transmit frames.
+
+Completion
+
+Before finishing:
+
+1. Run tests.
+2. Fix failures.
+3. Update PROJECT_STATE.md.
+4. Record files modified.
+5. Record exact tests performed.
+6. Record known issues.
+7. State the next recommended phase.
+
+Do not implement Phase 02.
+
