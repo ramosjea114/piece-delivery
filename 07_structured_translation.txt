@@ -1,0 +1,94 @@
+Phase 07 — Structured Translation
+
+Objective
+
+Make Qwen return machine-readable translation results.
+
+Read First
+
+Read:
+
+* PROJECT_SPEC.md
+* PROJECT_STATE.md
+* Qwen client
+
+Desired Input
+
+{
+  "translations": [
+    {
+      "id": "region_001",
+      "source": "今後のプロセス安全活動について"
+    }
+  ]
+}
+
+Desired Output
+
+{
+  "translations": [
+    {
+      "id": "region_001",
+      "translation": "Future Process Safety Activities"
+    }
+  ]
+}
+
+Requirements
+
+Implement:
+
+translation/
+└── translation_parser.py
+
+Support:
+
+* strict JSON extraction
+* validation
+* missing fields
+* malformed JSON
+* unexpected model text
+* retry when appropriate
+
+The model prompt must strongly prefer JSON-only output.
+
+Translation Styles
+
+Support:
+
+* natural
+* business
+* technical
+* literal
+
+Default:
+
+technical
+
+Bidirectional
+
+Support:
+
+Japanese → English
+English → Japanese
+
+Do not assume Japanese is always the source.
+
+Tests
+
+Mock model responses containing:
+
+1. valid JSON
+2. JSON inside markdown
+3. explanatory text
+4. malformed JSON
+5. missing translation
+6. multiple regions
+
+Completion
+
+Run tests.
+
+Update PROJECT_STATE.md.
+
+Do not build the overlay.
