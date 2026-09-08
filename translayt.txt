@@ -1,0 +1,2191 @@
+TRANSLAYT (Translation Overlay)
+Windows Local Spatial Translation Overlay
+
+Cline + Serena Master Implementation Prompt
+
+⸻
+
+0. ROLE
+
+You are the primary autonomous coding agent responsible for implementing this application inside the current repository.
+
+Use:
+
+* Cline for implementation, execution, testing, debugging, and iterative development.
+* Serena for repository understanding, symbol navigation, architectural inspection, and locating existing code before modifying it.
+
+Do not blindly generate an entire application in one response.
+
+Work incrementally, but prioritize reaching a working visible vertical slice as early as possible.
+
+The first meaningful milestone must already be capable of:
+
+1. capturing the Windows screen,
+2. detecting visible text locally,
+3. obtaining Japanese or English text,
+4. translating it through a locally hosted Qwen API,
+5. placing the translation spatially near the original text,
+6. displaying it as a transparent desktop overlay,
+7. allowing the user to toggle the overlay,
+8. and producing a readable local Markdown session summary.
+
+The application must NEVER require cloud OCR, cloud translation, cloud AI, telemetry, analytics, or remote storage.
+
+⸻
+
+1. PRODUCT DEFINITION
+
+Build a Windows desktop application that acts as a local bilingual AI translation layer over the user’s screen.
+
+Primary use case:
+
+A Japanese PowerPoint presentation, PDF, browser page, Teams meeting, or other visible Windows content is displayed.
+
+The application continuously observes the screen locally.
+
+When meaningful visual/text changes occur:
+
+Windows screen
+      ↓
+local screen capture
+      ↓
+OpenCV change detection
+      ↓
+frame stabilization
+      ↓
+local OCR
+      ↓
+text + bounding boxes
+      ↓
+translation cache
+      ↓
+local Qwen API
+      ↓
+structured translation
+      ↓
+spatial overlay
+
+The translation must appear near the original source text, similar to localized/transcribed Korean television content, but spatially anchored to the detected source text.
+
+Example:
+
+          今後のプロセス安全活動について
+          Future Process Safety Activities
+
+or:
+
+事故防止のための新しいプロセス
+New processes for accident prevention
+
+The Japanese remains visible.
+
+The English translation is rendered by the application in a transparent overlay positioned relative to the original OCR bounding box.
+
+The application must also support the reverse direction:
+
+English → Japanese
+Japanese → English
+
+The source/target language should be configurable, with an auto source-language mode.
+
+⸻
+
+2. NON-NEGOTIABLE PRIVACY REQUIREMENT
+
+This is a strict local-first application.
+
+Nothing except the explicitly configured local LLM API request may leave the machine.
+
+The application must NOT use:
+
+* OpenAI cloud
+* Anthropic cloud
+* Google Cloud Vision
+* Google Translate
+* Gemini
+* Microsoft Azure Vision
+* Azure Translator
+* AWS Textract
+* AWS Translate
+* DeepL
+* OCR.space
+* Hugging Face hosted inference
+* Replicate
+* Firebase
+* Sentry
+* PostHog
+* Google Analytics
+* telemetry services
+* analytics services
+* remote configuration
+* cloud databases
+* cloud storage
+* remote screenshot processing
+* remote OCR
+* remote translation
+* remote speech recognition
+* automatic cloud model downloads
+* CDN-loaded runtime dependencies
+* online fonts required for operation
+* automatic update services unless explicitly implemented later as an opt-in feature
+
+Do not add dependencies that secretly perform network communication.
+
+Do not add telemetry.
+
+Do not collect usage statistics.
+
+Do not send screenshots anywhere except an explicitly configured LOCAL LLM endpoint if a future vision model feature is deliberately enabled.
+
+For the initial implementation, the preferred architecture is:
+
+Screenshot
+    ↓
+LOCAL OCR
+    ↓
+text
+    ↓
+LOCAL Qwen API
+    ↓
+translation
+
+Do not send screenshots to Qwen for normal translation.
+
+⸻
+
+3. LLM REQUIREMENT
+
+The intended initial model is:
+
+Qwen3 4B
+
+The application must NOT hard-code a provider-specific implementation.
+
+Support OpenAI-compatible local APIs.
+
+Expected configuration:
+
+llm:
+  base_url: "http://127.0.0.1:11434/v1"
+  api_key: ""
+  model: "qwen3:4b"
+  temperature: 0
+  max_tokens: 1000
+  timeout: 60
+
+However:
+
+Do not assume Ollama is the only possible backend.
+
+The user may eventually use:
+
+* Ollama
+* llama.cpp server
+* LM Studio
+* vLLM
+* another OpenAI-compatible localhost server
+
+Therefore the application must treat these as configurable.
+
+The API URL, API key, and model must be external configuration.
+
+Do not hard-code credentials in source code.
+
+Do not commit secrets.
+
+Do not print API keys in logs.
+
+Do not expose API keys in UI logs.
+
+⸻
+
+4. IMPORTANT API CONFIGURATION REQUIREMENT
+
+Create one obvious local configuration location.
+
+Preferred implementation:
+
+config/
+    config.yaml
+
+or, if the project architecture requires it:
+
+config.yaml
+
+The exact location must be documented.
+
+The configuration must contain:
+
+llm:
+  base_url: ""
+  api_key: ""
+  model: ""
+  temperature: 0
+  max_tokens: 1000
+  timeout: 60
+
+The application must start even when the LLM configuration is empty.
+
+In that situation it should display a clear status such as:
+
+LLM: Not configured
+
+and allow offline/mock functionality.
+
+Do not make users modify Python source code to configure the LLM.
+
+Do not put the API key directly into .py files.
+
+Add:
+
+config.example.yaml
+
+with safe placeholder values.
+
+Add the real configuration file to .gitignore if appropriate.
+
+At the end of successful implementation, the final implementation report MUST explicitly tell the user:
+
+1. the exact configuration file path,
+2. the exact field containing the API endpoint,
+3. the exact field containing the API key,
+4. the exact field containing the model name,
+5. an example configuration using placeholders,
+6. how to test the connection,
+7. whether the configured endpoint is expected to be local.
+
+Do NOT print the user’s real API key in the final report.
+
+⸻
+
+5. FIRST ACTION — REPOSITORY INSPECTION
+
+Before making substantial changes:
+
+Use Serena to inspect:
+
+* repository structure
+* existing source files
+* existing Python environment
+* existing package manager
+* existing README
+* existing tests
+* existing configuration
+* existing application entry points
+* existing UI framework
+* existing dependencies
+
+Determine whether the repository is:
+
+EMPTY
+
+or:
+
+EXISTING PROJECT
+
+Do not overwrite an existing project blindly.
+
+Create:
+
+PLAN.md
+
+before large implementation work.
+
+PLAN.md must contain:
+
+# Implementation Plan
+## 1. Current Repository State
+## 2. Architecture
+## 3. Dependencies
+## 4. Data Flow
+## 5. Configuration
+## 6. Milestones
+## 7. Testing Strategy
+## 8. Privacy Constraints
+## 9. Known Risks
+## 10. Future Extensions
+
+Then proceed with implementation.
+
+Do NOT stop merely because the repository is empty.
+
+If the repository is empty, initialize a clean project.
+
+⸻
+
+6. RECOMMENDED TECHNOLOGY STACK
+
+Prefer Python unless the existing repository strongly suggests otherwise.
+
+Recommended:
+
+Python 3.11+
+PySide6
+OpenCV
+NumPy
+mss
+Pillow
+httpx
+PyYAML
+SQLite
+pytest
+
+OCR:
+
+Prefer a fully local OCR implementation.
+
+Potential choices:
+
+PaddleOCR
+
+or another robust offline OCR engine already available in the environment.
+
+The OCR implementation must be abstracted behind:
+
+OCREngine
+
+so that it can be replaced later.
+
+Do NOT automatically download OCR models at runtime from the internet.
+
+If model files are required, clearly document how they are installed locally.
+
+Do not make application startup depend on an internet connection.
+
+⸻
+
+7. CORE ARCHITECTURE
+
+Use a modular architecture similar to:
+
+app/
+    main.py
+    config/
+        settings.py
+    capture/
+        screen_capture.py
+    detection/
+        change_detector.py
+        frame_stabilizer.py
+    ocr/
+        ocr_engine.py
+        text_grouping.py
+    translation/
+        translator.py
+        llm_client.py
+        translation_parser.py
+        translation_cache.py
+        language_detection.py
+        glossary.py
+    overlay/
+        overlay_window.py
+        overlay_renderer.py
+        placement.py
+    session/
+        session_store.py
+        session_events.py
+        summary_generator.py
+    ui/
+        main_window.py
+        settings_dialog.py
+        status_panel.py
+    utils/
+        hashing.py
+        logging.py
+        normalization.py
+        geometry.py
+
+Do not create unnecessary abstraction purely for architectural appearance.
+
+Keep each module responsible for one clear job.
+
+⸻
+
+8. DATA FLOW
+
+The full system should eventually operate like this:
+
+                WINDOWS DESKTOP
+                      │
+                      ▼
+              Screen Capture
+                      │
+                      ▼
+             Frame Difference
+                      │
+                 meaningful?
+                 /         \
+               NO           YES
+               │             │
+             ignore          ▼
+                       Stabilization
+                             │
+                             ▼
+                           OCR
+                             │
+                             ▼
+                  Text + Bounding Boxes
+                             │
+                             ▼
+                       Normalization
+                             │
+                             ▼
+                       Cache Lookup
+                       /          \
+                    HIT            MISS
+                     │               │
+                     │               ▼
+                     │          Qwen3 4B
+                     │          localhost
+                     │               │
+                     │               ▼
+                     │          Translation
+                     │               │
+                     └───────┬───────┘
+                             ▼
+                       Overlay Renderer
+                             │
+                             ▼
+                    Spatial Translation
+                             │
+                             ▼
+                    Session Event Store
+                             │
+                             ▼
+                      Markdown Summary
+
+⸻
+
+9. SCREEN CAPTURE
+
+Implement a local Windows screen capture service.
+
+Requirements:
+
+* multiple monitor support
+* selectable monitor
+* configurable FPS
+* default approximately 3 FPS
+* no permanent screenshot storage
+* screenshots exist only in memory unless explicitly required for debugging
+* no screenshot logging
+* no screenshot upload
+
+Recommended API:
+
+class ScreenCapture:
+    def capture(self) -> np.ndarray:
+        ...
+
+Configuration:
+
+capture:
+  fps: 3
+  monitor: 1
+
+The capture loop must be stoppable.
+
+Do not allow runaway threads.
+
+⸻
+
+10. CHANGE DETECTION
+
+Do not OCR every frame.
+
+Use OpenCV.
+
+Basic pipeline:
+
+current frame
+      ↓
+resize
+      ↓
+grayscale
+      ↓
+blur
+      ↓
+absolute difference
+      ↓
+threshold
+      ↓
+changed-pixel ratio
+
+Example conceptual threshold:
+
+change_ratio > 0.015
+
+Make it configurable.
+
+Configuration:
+
+change_detection:
+  threshold: 0.015
+  downscale: 0.25
+
+The exact threshold must be tuned experimentally.
+
+Avoid hard-coded assumptions about a specific screen resolution.
+
+⸻
+
+11. FRAME STABILIZATION
+
+Presentation slides often animate or render in stages.
+
+Do not OCR immediately after every detected change.
+
+Require several sufficiently similar frames before processing.
+
+Example:
+
+stabilization:
+  stable_frames: 3
+  interval_ms: 150
+
+Concept:
+
+Frame changed
+     ↓
+wait
+     ↓
+compare
+     ↓
+stable?
+  NO → wait
+  YES
+     ↓
+OCR
+
+This prevents:
+
+* half-rendered text
+* animation artifacts
+* duplicated OCR
+* unnecessary LLM calls
+
+⸻
+
+12. OCR
+
+OCR output MUST preserve geometry.
+
+Each detected text item should contain:
+
+{
+  "id": "region_001",
+  "text": "今後のプロセス安全活動について",
+  "bbox": [420, 180, 780, 220],
+  "confidence": 0.97
+}
+
+Coordinates must use a clearly documented coordinate system.
+
+Recommended:
+
+screen coordinates
+x1, y1, x2, y2
+
+The coordinate system must remain consistent through:
+
+capture
+OCR
+grouping
+translation
+overlay
+
+Do not lose coordinates after OCR.
+
+⸻
+
+13. OCR TEXT GROUPING
+
+Raw OCR often returns individual words or fragments.
+
+Implement grouping so that:
+
+今後の
+プロセス
+安全活動
+について
+
+can become:
+
+今後のプロセス安全活動について
+
+when spatially appropriate.
+
+Grouping should consider:
+
+* line proximity
+* horizontal overlap
+* vertical distance
+* language
+* font/size similarity where available
+* reading order
+
+Do not blindly merge unrelated text boxes.
+
+The grouping algorithm must remain modular.
+
+⸻
+
+14. LANGUAGE DETECTION
+
+Support:
+
+auto
+Japanese
+English
+
+At minimum, detect Japanese vs English locally where practical.
+
+Do not send text to a cloud language-detection service.
+
+For obvious Japanese:
+
+Japanese characters
+hiragana
+katakana
+kanji
+
+For obvious English:
+
+Latin alphabet
+
+If uncertain, use the configured source language.
+
+⸻
+
+15. BIDIRECTIONAL TRANSLATION
+
+This is a first-class feature.
+
+Supported modes:
+
+Japanese → English
+English → Japanese
+Auto → English
+Auto → Japanese
+
+Translation style:
+
+Natural
+Business
+Technical
+Literal
+
+Default:
+
+Natural
+
+For presentations, prefer:
+
+Business
+
+or:
+
+Natural
+
+The translator interface should look conceptually like:
+
+translate(
+    text,
+    source_language,
+    target_language,
+    style,
+    glossary
+)
+
+⸻
+
+16. QWEN PROMPT DESIGN
+
+Qwen3 4B should NOT be treated as a vision model in the primary translation pipeline.
+
+OCR supplies the visual information.
+
+Qwen receives text.
+
+The prompt should emphasize:
+
+* preserve meaning
+* natural translation
+* correct technical terminology
+* do not add explanations
+* do not omit important information
+* preserve names/acronyms
+* respect glossary
+* return strict JSON
+* do not return markdown
+* do not return commentary
+
+Example conceptual instruction:
+
+You are a professional Japanese-English technical translator.
+Translate the supplied text from the source language to the target language.
+Requirements:
+- Preserve meaning accurately.
+- Prefer natural professional language.
+- Respect the supplied terminology glossary.
+- Do not add explanations.
+- Do not omit information.
+- Preserve technical acronyms.
+- Return ONLY valid JSON.
+
+The application must use structured requests containing region IDs.
+
+Example:
+
+{
+  "source_language": "Japanese",
+  "target_language": "English",
+  "style": "Business",
+  "items": [
+    {
+      "id": "region_001",
+      "text": "今後のプロセス安全活動について"
+    }
+  ]
+}
+
+Expected:
+
+{
+  "translations": [
+    {
+      "id": "region_001",
+      "translation": "Future Process Safety Activities"
+    }
+  ]
+}
+
+The parser must tolerate harmless formatting problems where reasonably possible.
+
+However, do not silently accept completely malformed responses.
+
+⸻
+
+17. TRANSLATION CACHE
+
+Caching is mandatory.
+
+The application must NOT repeatedly translate identical text.
+
+Cache key should be based on:
+
+normalized source text
+source language
+target language
+translation style
+glossary version
+
+Hash using SHA-256.
+
+Example conceptual key:
+
+SHA256(
+    normalized_text
+    + source_language
+    + target_language
+    + style
+    + glossary_version
+)
+
+Use SQLite for persistent local caching.
+
+Cache hit:
+
+OCR
+ ↓
+cache HIT
+ ↓
+instant translation
+
+Cache miss:
+
+OCR
+ ↓
+cache MISS
+ ↓
+Qwen
+ ↓
+store
+ ↓
+display
+
+Do not store screenshots in the cache.
+
+⸻
+
+18. GLOSSARY
+
+Implement a local glossary.
+
+Example:
+
+glossary:
+  変更管理: "Management of Change"
+  プロセス安全: "Process Safety"
+  危険源: "Hazard"
+  安全計装システム: "Safety Instrumented System"
+  緊急遮断: "Emergency Shutdown"
+
+Support bidirectional terminology.
+
+For example:
+
+変更管理 ↔ Management of Change
+
+Glossary must be included in the Qwen translation context.
+
+Glossary should be versioned so that changing terminology invalidates relevant cached translations.
+
+⸻
+
+19. SPATIAL TRANSLATION OVERLAY
+
+This is one of the most important features.
+
+The translation must be spatially anchored to the original source text.
+
+Do NOT implement only bottom-of-screen subtitles.
+
+Given:
+
+{
+  "text": "今後のプロセス安全活動について",
+  "bbox": [420, 180, 780, 220]
+}
+
+and:
+
+Future Process Safety Activities
+
+the renderer should determine the best position near:
+
+[420,180,780,220]
+
+Preferred placement order:
+
+1. directly below source
+2. directly above source
+3. right side
+4. left side
+5. within/over source area only when necessary
+
+The renderer must check:
+
+* screen boundaries
+* available space
+* nearby translation boxes
+* overlap with other translations
+* monitor boundaries
+
+The translation should visually appear associated with the source.
+
+Example:
+
+今後のプロセス安全活動について
+Future Process Safety Activities
+
+The Japanese remains untouched.
+
+⸻
+
+20. OVERLAY DESIGN
+
+Use a transparent, always-on-top Windows overlay.
+
+Requirements:
+
+* transparent background
+* no visible application window around the translation
+* click-through mode where appropriate
+* always-on-top
+* translation text readable
+* original application remains usable
+* configurable font size
+* configurable opacity
+* optional background/shadow for readability
+* correct multi-monitor positioning
+* correct DPI scaling
+
+Example configuration:
+
+overlay:
+  font_size: 20
+  opacity: 0.90
+  show_source: true
+  click_through: true
+  placement: "adaptive"
+
+Do not obstruct the presentation unnecessarily.
+
+⸻
+
+21. OVERLAY STYLE
+
+Default style should resemble modern localized subtitles rather than a developer debug interface.
+
+For example:
+
+今後のプロセス安全活動について
+Future Process Safety Activities
+
+The translated text should be visually distinct but not huge.
+
+Implement text measurement.
+
+The placement engine must account for the actual rendered dimensions of the translation.
+
+Do not simply offset by a fixed 20 pixels regardless of text size.
+
+⸻
+
+22. DEBUG MODE
+
+Provide a developer/debug mode.
+
+It may show:
+
+OCR bounding boxes
+OCR confidence
+region IDs
+detected changes
+processing time
+cache HIT/MISS
+translation latency
+LLM status
+
+Debug mode must be OFF by default.
+
+Do not log sensitive OCR text by default.
+
+⸻
+
+23. PERFORMANCE
+
+Target behavior:
+
+Screen capture:
+~3 FPS
+Change detection:
+every frame
+OCR:
+only after meaningful/stable changes
+LLM:
+only for uncached text
+Overlay:
+immediate after translation
+
+Target perceived translation latency:
+
+approximately 1–2 seconds
+
+Do not require this exact number if hardware/OCR/model latency prevents it, but optimize toward it.
+
+Avoid:
+
+* OCR every frame
+* LLM every frame
+* translating duplicate OCR
+* blocking the UI thread
+* unnecessary screenshot copies
+* repeatedly constructing huge prompts
+
+Use worker threads/tasks where appropriate.
+
+The UI must remain responsive while OCR and LLM operations occur.
+
+⸻
+
+24. SLIDE DETECTION AND HASHING
+
+Implement a slide/content hash after the basic vertical slice works.
+
+A perceptual/content hash can detect when a previous slide returns.
+
+Example:
+
+Slide A
+ ↓
+translate
+ ↓
+cache
+Slide B
+ ↓
+translate
+ ↓
+cache
+Slide A again
+ ↓
+slide hash recognized
+ ↓
+restore previous translations
+ ↓
+instant overlay
+
+This is highly desirable for presentations.
+
+Do not make this block the first working version.
+
+⸻
+
+25. SESSION RECORDING
+
+The application must maintain a local session.
+
+Do NOT record:
+
+* microphone audio
+* video
+* screenshots
+
+unless explicitly added later by the user.
+
+Instead store structured events.
+
+Example:
+
+session started
+slide detected
+OCR detected
+translation generated
+user query
+generated response
+user note
+terminology encountered
+error
+session ended
+
+SQLite is preferred.
+
+⸻
+
+26. SESSION SUMMARY
+
+At the end of a session, provide:
+
+Generate Summary
+
+This generates a local Markdown file.
+
+Example filename:
+
+2026-09-08_session_001.md
+
+Summary structure:
+
+# Session Summary
+**Date / Time:**
+**Languages:** Japanese ↔ English
+## Executive Summary
+## Key Topics
+## Slide-by-Slide Content
+## Questions and Responses
+## Important Points
+## Action Items
+## Terminology
+## Notes
+
+The Markdown should clearly distinguish:
+
+Source translation
+AI-generated summary
+User notes
+Generated responses
+Action items
+
+Do not claim that an AI-generated summary was literally stated by the presenter.
+
+⸻
+
+27. LONG SESSION SUMMARY
+
+Do not repeatedly send the entire growing session to Qwen.
+
+For long sessions:
+
+events
+ ↓
+chunk
+ ↓
+Qwen summary
+ ↓
+local summary state
+ ↓
+next chunk
+ ↓
+Qwen
+ ↓
+merge/update
+
+Keep the process local.
+
+Use incremental summaries.
+
+⸻
+
+28. OFFLINE MODE
+
+The entire application must be testable without internet.
+
+Implement a mock translator.
+
+Example:
+
+MockTranslator
+
+It can return deterministic translations such as:
+
+[MOCK EN] 今後のプロセス安全活動について
+
+This allows:
+
+* UI testing
+* overlay testing
+* OCR testing
+* cache testing
+* session testing
+* packaging testing
+
+without an LLM.
+
+The application must not fail simply because the configured LLM endpoint is unavailable.
+
+Display:
+
+LLM: Offline / Unavailable
+
+instead.
+
+⸻
+
+29. ERROR HANDLING
+
+Handle gracefully:
+
+* LLM endpoint unavailable
+* connection timeout
+* malformed JSON
+* empty translation
+* OCR failure
+* OCR confidence too low
+* duplicate OCR
+* unsupported language
+* invalid configuration
+* monitor unavailable
+* DPI scaling issues
+* translation cache corruption
+* Qwen returning unexpected output
+
+The application must not crash because one translation failed.
+
+A failed translation should be retried or skipped according to a controlled policy.
+
+⸻
+
+30. UI
+
+Build a minimal usable UI.
+
+Do not overdesign.
+
+At minimum:
+
+┌─────────────────────────────────────────────┐
+│ Local Translator                            │
+├─────────────────────────────────────────────┤
+│ Status: ● Running                           │
+│                                             │
+│ Source: [Auto ▼]                            │
+│ Target: [English ▼]                         │
+│ Style:  [Natural ▼]                         │
+│                                             │
+│ Monitor: [1 ▼]                              │
+│                                             │
+│ [ Start Translation ]                       │
+│ [ Stop Translation ]                        │
+│                                             │
+│ [ Show Overlay ]                            │
+│ [ Hide Overlay ]                            │
+│                                             │
+│ [ Generate Session Summary ]                │
+│                                             │
+│ LLM: Connected                              │
+│ OCR: Ready                                  │
+└─────────────────────────────────────────────┘
+
+Settings should include:
+
+* LLM configuration
+* capture FPS
+* monitor
+* change threshold
+* OCR confidence
+* overlay font size
+* translation style
+* language direction
+
+⸻
+
+31. HOTKEY
+
+Provide a global toggle if practical.
+
+Preferred:
+
+Ctrl + Shift + T
+
+or another configurable shortcut.
+
+It should toggle:
+
+translation ON/OFF
+
+Do not interfere with common PowerPoint shortcuts.
+
+Make the hotkey configurable later if implementation complexity warrants it.
+
+⸻
+
+32. TRANSLATION REGION LIFECYCLE
+
+Each OCR region should have a lifecycle.
+
+Conceptually:
+
+DETECTED
+   ↓
+NORMALIZED
+   ↓
+GROUPED
+   ↓
+CACHE LOOKUP
+   ↓
+TRANSLATED
+   ↓
+RENDERED
+   ↓
+UPDATED / REMOVED
+
+When the source disappears:
+
+remove its translation
+
+Do not leave stale translations floating over unrelated slides.
+
+⸻
+
+33. REGION TRACKING
+
+When the same source text remains on screen across frames, do not recreate the translation repeatedly.
+
+Track regions using:
+
+* normalized text
+* spatial similarity
+* bounding box similarity
+* optional region hash
+
+This should prevent flickering.
+
+⸻
+
+34. TEXT NORMALIZATION
+
+Normalize OCR before caching:
+
+* whitespace
+* line breaks
+* Unicode normalization
+* accidental OCR punctuation
+* repeated spaces
+
+Do not destroy meaningful Japanese punctuation.
+
+Keep the original OCR text separately for display/debugging.
+
+⸻
+
+35. SECURITY
+
+Never log:
+
+API key
+authorization header
+full screenshot
+full LLM prompt
+full LLM response
+
+unless explicitly enabled by developer debug settings.
+
+Redact credentials.
+
+Use:
+
+********
+
+for secrets in diagnostics.
+
+Do not expose credentials in exceptions.
+
+⸻
+
+36. TESTING REQUIREMENTS
+
+Create automated tests for:
+
+Change Detection
+
+* no change
+* small change
+* large change
+* threshold behavior
+
+Stabilization
+
+* unstable frames
+* stable frames
+* timeout
+
+OCR
+
+* empty result
+* low confidence
+* multiple regions
+* Japanese
+* English
+
+Text Grouping
+
+* same line
+* multiple lines
+* unrelated regions
+
+Normalization
+
+* whitespace
+* Unicode
+* line breaks
+
+Translation Cache
+
+* cache miss
+* cache hit
+* different target language
+* different style
+* changed glossary
+* identical normalized text
+
+LLM Parser
+
+* valid JSON
+* malformed JSON
+* missing field
+* unknown region
+* missing translation
+
+Geometry
+
+* below placement
+* above placement
+* left/right placement
+* screen boundaries
+* multiple monitors
+* DPI scaling
+
+Overlay
+
+* show
+* hide
+* update
+* remove stale translation
+
+Configuration
+
+* valid config
+* missing config
+* invalid URL
+* missing model
+
+Session
+
+* session start
+* events
+* summary generation
+* Markdown export
+
+Tests must be runnable with networking disabled.
+
+⸻
+
+37. FIRST WORKING VERTICAL SLICE
+
+Do NOT spend the first implementation cycle building every feature.
+
+The first usable milestone MUST be:
+
+SCREEN
+ ↓
+CAPTURE
+ ↓
+OCR
+ ↓
+ONE TRANSLATION
+ ↓
+OVERLAY
+
+Specifically:
+
+1. capture selected monitor
+2. detect/stabilize screen
+3. OCR visible text
+4. select a valid OCR region
+5. check cache
+6. call local Qwen API if cache misses
+7. parse translation
+8. render translation near source bounding box
+9. update overlay
+10. display status
+
+The user should be able to launch the program and SEE translated text.
+
+Do not postpone visual output until the entire architecture is finished.
+
+⸻
+
+38. DEVELOPMENT MILESTONES
+
+Implement in this order.
+
+Milestone 1 — Project Foundation
+
+Create:
+
+README.md
+PLAN.md
+ACT.md
+requirements.txt or pyproject.toml
+config.example.yaml
+.gitignore
+tests/
+
+Create application entry point.
+
+Make sure application launches.
+
+⸻
+
+Milestone 2 — Screen Capture
+
+Implement monitor selection.
+
+Display captured frames in a debug window.
+
+Verify:
+
+* correct monitor
+* correct resolution
+* correct coordinates
+
+⸻
+
+Milestone 3 — Change Detection
+
+Implement OpenCV difference detection.
+
+Show status:
+
+UNCHANGED
+CHANGED
+STABILIZING
+
+⸻
+
+Milestone 4 — OCR
+
+Integrate local OCR.
+
+Show OCR bounding boxes in debug mode.
+
+Verify Japanese and English.
+
+⸻
+
+Milestone 5 — Text Grouping
+
+Group OCR fragments into readable text regions.
+
+⸻
+
+Milestone 6 — Qwen API
+
+Implement:
+
+LLMClient
+
+with configurable:
+
+base_url
+api_key
+model
+temperature
+max_tokens
+timeout
+
+Support OpenAI-compatible chat completions.
+
+Add connection test.
+
+⸻
+
+Milestone 7 — Single Spatial Translation
+
+Take one OCR region.
+
+Translate it.
+
+Render translation below/near it.
+
+This is the first major demo milestone.
+
+Example:
+
+今後のプロセス安全活動について
+Future Process Safety Activities
+
+⸻
+
+Milestone 8 — Translation Cache
+
+Implement SQLite cache.
+
+Verify duplicate text does not call Qwen twice.
+
+⸻
+
+Milestone 9 — Multiple Regions
+
+Translate multiple OCR regions in one batch.
+
+Use region IDs.
+
+⸻
+
+Milestone 10 — Adaptive Placement
+
+Implement:
+
+below
+above
+right
+left
+fallback
+
+based on available space.
+
+⸻
+
+Milestone 11 — Live Translation Loop
+
+Combine:
+
+capture
+change detection
+stabilization
+OCR
+grouping
+cache
+translation
+overlay
+
+⸻
+
+Milestone 12 — Bidirectional Mode
+
+Implement:
+
+Japanese → English
+English → Japanese
+Auto → English
+Auto → Japanese
+
+⸻
+
+Milestone 13 — Glossary
+
+Implement local terminology dictionary.
+
+⸻
+
+Milestone 14 — Slide Hashing
+
+Recognize previously seen slides and restore translations from local storage.
+
+⸻
+
+Milestone 15 — Session Store
+
+Record structured local events.
+
+⸻
+
+Milestone 16 — Markdown Summary
+
+Generate session Markdown through local Qwen.
+
+⸻
+
+Milestone 17 — UI Polish
+
+Improve:
+
+* settings
+* status
+* controls
+* overlay
+* error messages
+* usability
+
+⸻
+
+Milestone 18 — Packaging
+
+Build a Windows executable.
+
+Prefer:
+
+PyInstaller
+
+or another suitable local packaging solution.
+
+The packaged application must not require Python installation if packaging supports this reliably.
+
+⸻
+
+39. PACKAGING REQUIREMENTS
+
+The final application should eventually resemble:
+
+LocalTranslator/
+    LocalTranslator.exe
+    config.yaml
+    data/
+        translation_cache.db
+        sessions.db
+
+Do not bundle user secrets into the executable.
+
+Configuration should remain editable.
+
+Document where the user places:
+
+base_url
+api_key
+model
+
+⸻
+
+40. LOGGING
+
+Use structured application logs.
+
+Default:
+
+INFO
+
+Do not log sensitive content.
+
+Example:
+
+[INFO] OCR detected 8 regions
+[INFO] Translation cache hit: 5
+[INFO] Translation cache miss: 3
+[INFO] LLM request completed in 420 ms
+[INFO] Overlay updated
+
+Do NOT output:
+
+[INFO] API KEY = ...
+[INFO] OCR TEXT = ...
+[INFO] PROMPT = ...
+
+unless explicitly enabled in a developer-only debug mode.
+
+⸻
+
+41. LLM BATCHING
+
+Do not call Qwen separately for every word.
+
+Batch related OCR regions.
+
+Example:
+
+{
+  "items": [
+    {"id": "r001", "text": "..."},
+    {"id": "r002", "text": "..."},
+    {"id": "r003", "text": "..."}
+  ]
+}
+
+Return:
+
+{
+  "translations": [
+    {"id": "r001", "translation": "..."},
+    {"id": "r002", "translation": "..."},
+    {"id": "r003", "translation": "..."}
+  ]
+}
+
+This reduces:
+
+* API overhead
+* model initialization overhead
+* latency
+* token overhead
+
+and works well with Qwen3 4B.
+
+⸻
+
+42. QWEN3 4B OPTIMIZATION
+
+Assume the primary LLM is relatively small.
+
+Do not give Qwen enormous prompts.
+
+Translation prompts should be concise.
+
+Use:
+
+short system instruction
++
+translation style
++
+glossary
++
+OCR text
+
+Avoid repeatedly sending:
+
+* entire slide history
+* entire session history
+* entire database
+* screenshots
+
+For context-sensitive translation, use only relevant nearby text.
+
+The architecture must allow upgrading to a larger model later without redesign.
+
+⸻
+
+43. CONTEXT AWARENESS
+
+Maintain a small local context window for translation.
+
+For example:
+
+Current slide:
+Previous translated region:
+Current region:
+Nearby OCR regions:
+Glossary
+
+Do not send the entire presentation.
+
+This allows Qwen3 4B to understand phrases that depend on nearby headings without overwhelming it.
+
+⸻
+
+44. FUTURE VISION MODEL SUPPORT
+
+Do NOT implement this initially unless trivial.
+
+Architecture should permit:
+
+OCR path
+     │
+     ├── normal text → Qwen3 4B
+     │
+     └── difficult visual layout → local Qwen-VL later
+
+Qwen-VL would remain optional and local.
+
+Do not make the base application dependent on a vision model.
+
+⸻
+
+45. FUTURE SPEECH SUPPORT
+
+Do not implement microphone/STT/TTS in the initial milestone.
+
+Keep interfaces extensible for:
+
+Speech-to-text
+Text-to-speech
+
+later.
+
+These must also be local if implemented.
+
+⸻
+
+46. USER EXPERIENCE PRINCIPLE
+
+The application should feel like:
+
+"I put it over my presentation and it just translates what appears."
+
+not:
+
+"I have to manually select text, press translate, wait, and copy the result."
+
+The default workflow should be:
+
+Start
+ ↓
+Choose direction
+ ↓
+Start translation
+ ↓
+Continue using PowerPoint/browser/Teams normally
+ ↓
+Translations appear spatially near source text
+
+⸻
+
+47. IMPORTANT: DO NOT OVERENGINEER THE FIRST PASS
+
+Avoid prematurely implementing:
+
+* plugins
+* cloud integrations
+* accounts
+* login
+* databases beyond local SQLite
+* complex microservices
+* browser extensions
+* web servers
+* cloud deployment
+* remote APIs
+* unnecessary dependency frameworks
+
+This is a local Windows desktop application.
+
+Keep it simple.
+
+⸻
+
+48. AGENT EXECUTION LOOP
+
+For each milestone:
+
+Step 1 — Inspect
+
+Use Serena to identify relevant files and symbols.
+
+Step 2 — Plan
+
+State:
+
+What will change
+Which files will change
+Why
+What the smallest implementation is
+
+Step 3 — Implement
+
+Make the smallest useful change.
+
+Step 4 — Test
+
+Run relevant automated tests.
+
+Step 5 — Manual Verify
+
+When applicable, actually launch the application.
+
+Step 6 — Fix
+
+Resolve errors before moving forward.
+
+Step 7 — Update Documentation
+
+Update:
+
+PLAN.md
+README.md
+
+where appropriate.
+
+Step 8 — Continue
+
+Do not stop after every trivial file unless blocked.
+
+⸻
+
+49. WHEN SOMETHING FAILS
+
+Do not simply report:
+
+It failed.
+
+Instead:
+
+1. inspect the error,
+2. identify root cause,
+3. fix it,
+4. rerun the failing test,
+5. run related regression tests,
+6. continue.
+
+Do not hide errors.
+
+Do not disable tests merely to make the project appear successful.
+
+Do not replace a real feature with a fake implementation unless the milestone explicitly allows a mock.
+
+⸻
+
+50. DEFINITION OF DONE
+
+The project is considered successfully implemented when:
+
+Core
+
+* [ ]	Windows application launches
+* [ ]	screen capture works
+* [ ]	monitor selection works
+* [ ]	change detection works
+* [ ]	stabilization works
+* [ ]	local OCR works
+* [ ]	OCR bounding boxes work
+* [ ]	Japanese text can be recognized
+* [ ]	English text can be recognized
+* [ ]	text grouping works
+* [ ]	Qwen-compatible API works
+* [ ]	API configuration is external
+* [ ]	API key is not hard-coded
+* [ ]	translation cache works
+* [ ]	Japanese → English works
+* [ ]	English → Japanese works
+* [ ]	spatial overlay works
+* [ ]	translations remain anchored to source text
+* [ ]	stale translations disappear
+* [ ]	overlay does not block normal desktop use
+* [ ]	session events are stored locally
+* [ ]	Markdown summary can be generated
+* [ ]	offline/mock mode works
+
+Privacy
+
+* [ ]	no cloud OCR
+* [ ]	no cloud translation
+* [ ]	no telemetry
+* [ ]	no analytics
+* [ ]	no automatic screenshot upload
+* [ ]	no hidden network requests
+* [ ]	only configured LLM endpoint is contacted
+* [ ]	API key is not logged
+* [ ]	screenshots are not persisted by default
+
+Testing
+
+* [ ]	automated tests pass
+* [ ]	application launches successfully
+* [ ]	manual smoke test completed
+* [ ]	LLM connection test completed or clearly documented as unavailable
+* [ ]	offline mode verified
+
+⸻
+
+51. REQUIRED SMOKE TEST
+
+Before declaring success, perform an actual end-to-end smoke test.
+
+Use a simple visible test page or locally created test window containing:
+
+今後のプロセス安全活動について
+事故防止のための新しいプロセス
+安全性向上に向けた今後の取り組み
+
+Expected approximate translations:
+
+Future Process Safety Activities
+New Processes for Accident Prevention
+Future Initiatives for Improving Safety
+
+Exact wording may vary as long as the translation is accurate.
+
+Verify that translations appear spatially near the corresponding Japanese text.
+
+Then test English → Japanese with:
+
+Future Process Safety Activities
+New processes for accident prevention
+
+⸻
+
+52. SESSION SUMMARY SMOKE TEST
+
+Create a short test session.
+
+Events:
+
+Session started
+Slide detected
+Japanese text translated
+English text translated
+User note added
+Session ended
+
+Generate Markdown.
+
+Verify that the resulting .md file is readable.
+
+⸻
+
+53. FINAL REPORT
+
+After all implementation and tests succeed, create/update:
+
+IMPLEMENTATION_REPORT.md
+
+The report MUST contain:
+
+# Implementation Report
+## Status
+## What Was Implemented
+## Architecture
+## Main Files
+## Dependencies
+## Tests
+## Manual Smoke Test
+## Privacy Verification
+## LLM Configuration
+### API Endpoint
+Path:
+Field:
+### API Key
+Path:
+Field:
+### Model
+Path:
+Field:
+### Example Configuration
+```yaml
+llm:
+  base_url: "http://127.0.0.1:11434/v1"
+  api_key: "YOUR_LOCAL_API_KEY"
+  model: "qwen3:4b"
+
+How To Start
+
+How To Test Translation
+
+How To Generate Session Summary
+
+Known Limitations
+
+Future Improvements
+
+CRITICAL:
+Do not put the user's real API key into `IMPLEMENTATION_REPORT.md`.
+The report should tell the user exactly where to put it.
+For example:
+```text
+config/config.yaml
+
+and:
+
+llm:
+  base_url: "..."
+  api_key: "..."
+  model: "qwen3:4b"
+
+⸻
+
+54. FINAL RESPONSE TO USER
+
+When the implementation is complete, your final response must be concise and practical.
+
+Include:
+
+Implementation complete.
+Working:
+- screen capture
+- local OCR
+- JP ↔ EN translation
+- spatial overlay
+- translation cache
+- session recording
+- Markdown summary
+Tests:
+X passed
+
+Then explicitly state:
+
+LLM configuration:
+File: <exact path>
+Endpoint field: llm.base_url
+API key field: llm.api_key
+Model field: llm.model
+
+Then provide the exact startup/test commands.
+
+Do not dump the entire codebase into the response.
+
+Do not print secrets.
+
+⸻
+
+55. ABSOLUTE FINAL PRINCIPLE
+
+Prioritize:
+
+WORKING SOFTWARE
+>
+VISIBLE RESULT
+>
+CORRECTNESS
+>
+PRIVACY
+>
+PERFORMANCE
+>
+ARCHITECTURAL ELEGANCE
+
+The first few implementation attempts should produce visible progress.
+
+Do not spend multiple iterations building infrastructure without demonstrating the translation overlay.
+
+The first major success criterion is:
+
+Japanese text on Windows screen
+          ↓
+local OCR
+          ↓
+Qwen3 4B
+          ↓
+English appears beside/below the Japanese
+
+with no cloud service involved.
+
+Once that works, expand outward into:
+
+multiple regions
+→ caching
+→ live detection
+→ bidirectional translation
+→ glossary
+→ slide recognition
+→ session recording
+→ Markdown summary
+→ packaging
+
+Build the smallest working system first, then make it excellent.
