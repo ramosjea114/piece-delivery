@@ -1,0 +1,74 @@
+Phase 17 — Windows Packaging
+
+Objective
+
+Package the application as a Windows executable.
+
+Requirements
+
+Use PyInstaller.
+
+Target:
+
+Windows 10/11 x64
+
+Build
+
+Create an appropriate PyInstaller configuration.
+
+The packaged application should include:
+
+* application code
+* required Python dependencies
+* required static assets
+* configuration example if appropriate
+
+Do not embed:
+
+* real API keys
+* personal credentials
+* private data
+* development secrets
+
+Configuration
+
+The packaged application should use an external configuration file.
+
+Document exactly where the user should place it.
+
+OCR
+
+Document any OCR runtime/model dependencies that cannot safely be embedded.
+
+Do not automatically download them from the Internet.
+
+Build Tests
+
+Verify:
+
+1. clean build
+2. executable launches
+3. GUI appears
+4. configuration loads
+5. local LLM connection works when configured
+6. translation pipeline starts
+
+Output
+
+Create a clear build directory.
+
+Do not commit large generated binaries unless explicitly requested.
+
+Completion
+
+Run the packaged application.
+
+Update PROJECT_STATE.md.
+
+Document:
+
+* build command
+* output location
+* runtime requirements
+* configuration location
+* known packaging limitations
