@@ -1,0 +1,9 @@
+capture
+   ↓
+frame A
+frame B
+   ↓
+OpenCV difference
+   ↓
+"something changed"
+
