@@ -1,0 +1,78 @@
+Phase 05 — OCR Text Grouping and Normalization
+
+Objective
+
+Convert fragmented OCR regions into useful semantic text blocks.
+
+Example input:
+
+今後の
+プロセス
+安全活動に
+ついて
+
+Desired output:
+
+今後のプロセス安全活動について
+
+Read First
+
+Read:
+
+* PROJECT_SPEC.md
+* ARCHITECTURE.md
+* PROJECT_STATE.md
+* OCR implementation
+
+Implement
+
+Create:
+
+ocr/
+└── text_grouping.py
+
+Support:
+
+* line grouping
+* horizontal proximity
+* vertical proximity
+* reading order
+* duplicate removal
+* whitespace normalization
+* confidence aggregation
+
+Do not attempt full semantic NLP.
+
+The purpose is to produce sensible translation units.
+
+Preserve Geometry
+
+Each grouped block must retain a bounding box covering the original OCR regions.
+
+Example:
+
+{
+  "id": "region_001",
+  "text": "今後のプロセス安全活動について",
+  "bbox": [420, 180, 780, 250],
+  "confidence": 0.94
+}
+
+Tests
+
+Use synthetic OCR regions to test:
+
+* horizontal grouping
+* vertical grouping
+* unrelated region separation
+* reading order
+* duplicate text
+* bounding-box merging
+
+Completion
+
+Run tests.
+
+Update PROJECT_STATE.md.
+
+Do not implement Qwen.
