@@ -1,0 +1,51 @@
+PHASE 0 — Foundation
+    ↓
+PHASE 1 — Screen Capture
+    ↓
+PHASE 2 — Change Detection
+    ↓
+PHASE 3 — OCR
+    ↓
+PHASE 4 — Translation
+    ↓
+PHASE 5 — Overlay
+    ↓
+PHASE 6 — Pipeline Integration
+    ↓
+PHASE 7 — Optimization
+    ↓
+PHASE 8 — Session Summary
+    ↓
+PHASE 9 — Packaging
+
+Create the project foundation.
+
+Requirements:
+- Windows 10/11
+- Python 3.11+
+- Local-first architecture
+- No cloud OCR
+- No cloud translation
+- No telemetry
+- Translation provider must use a configurable OpenAI-compatible local endpoint
+- Initial model: qwen3:4b
+- GUI: PySide6
+- Capture: mss
+- Image processing: OpenCV
+- OCR: pluggable local OCR engine
+- Storage: SQLite
+- Configuration: YAML
+
+Create:
+- PROJECT_SPEC.md
+- ARCHITECTURE.md
+- PROJECT_STATE.md
+- config.example.yaml
+- .gitignore
+- requirements.txt
+- basic application entry point
+
+Do not implement OCR, translation, overlay, or the full pipeline yet.
+
+Run a basic application startup test before finishing.
+Update PROJECT_STATE.md with what was actually created.
