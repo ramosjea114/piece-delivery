@@ -1,0 +1,55 @@
+Phase 12 — Bidirectional Language Support
+
+Objective
+
+Complete Japanese ↔ English translation.
+
+Requirements
+
+Support:
+
+Japanese → English
+English → Japanese
+
+Add automatic source-language detection where practical.
+
+Allow manual override:
+
+AUTO
+JA → EN
+EN → JA
+
+UI
+
+Add a minimal control for translation direction.
+
+Do not redesign the entire application.
+
+Translation Prompt
+
+Ensure Qwen receives:
+
+* source language
+* target language
+* translation style
+* glossary instructions when applicable
+
+Do not send screenshots to Qwen.
+
+Tests
+
+Test:
+
+* Japanese → English
+* English → Japanese
+* auto detection
+* manual override
+* mixed-language text
+
+Use mocked LLM responses for deterministic tests.
+
+Completion
+
+Run tests.
+
+Update PROJECT_STATE.md.
