@@ -1,0 +1,577 @@
+Phase 19 — Privacy, Ephemeral Processing, and Use Boundaries
+
+Objective
+
+Finalize the application’s privacy, data-retention, and intended-use behavior.
+
+This phase does not attempt to provide legal advice or establish that every possible use of the application is legally permissible.
+
+The engineering objective is to ensure that the application is clearly designed as:
+
+A local-first, real-time translation/accessibility layer for content already visible to the user.
+
+The application should automate a workflow that a user could otherwise perform manually:
+
+Displayed Japanese content
+        ↓
+Manual screenshot/snippet or camera capture
+        ↓
+OCR
+        ↓
+Translation
+        ↓
+Read translated result
+
+The application streamlines this into:
+
+Displayed Japanese content
+        ↓
+Ephemeral local screen capture
+        ↓
+Local OCR
+        ↓
+Local translation
+        ↓
+Spatial translation overlay
+        ↓
+Discard temporary visual data
+
+The application must not be designed as a presentation-copying, recording, or redistribution system.
+
+⸻
+
+1. Scope Boundary
+
+The MVP is a translation layer over the user’s existing desktop view.
+
+It is NOT:
+
+* a PowerPoint extraction tool
+* a presentation downloader
+* a presentation archiver
+* a screen recorder
+* a slide-deck reconstruction tool
+* a content redistribution system
+* a cloud screenshot service
+* a general-purpose computer-use agent
+* a replacement for the presenter’s original content
+
+The underlying presentation should remain visible.
+
+The translation should appear as an additional spatially anchored layer.
+
+Example:
+
+今後のプロセス安全活動について
+Future Process Safety Activities
+
+The Japanese source remains intact.
+
+⸻
+
+2. Ephemeral Screen Processing
+
+Screen frames must be treated as temporary processing data.
+
+Preferred pipeline:
+
+Screen
+  ↓
+Capture frame
+  ↓
+Change detection
+  ↓
+Frame stabilization
+  ↓
+OCR
+  ↓
+Text + bounding boxes
+  ↓
+Translation
+  ↓
+Overlay
+  ↓
+Discard frame
+
+Do not retain raw screenshots by default.
+
+Do not build a persistent screenshot history.
+
+Do not silently save presentation images to disk.
+
+Temporary frame buffers may exist in memory while processing is active.
+
+⸻
+
+3. Privacy Defaults
+
+The application must default to:
+
+privacy:
+  local_only: true
+  allow_remote_llm: false
+  store_screenshots: false
+  store_audio: false
+  telemetry: false
+
+The application must not silently transmit:
+
+* screenshots
+* OCR images
+* OCR text
+* presentation content
+* translated content
+* audio
+* session information
+* usage analytics
+
+to external services.
+
+⸻
+
+4. Local-Only Enforcement
+
+When:
+
+privacy:
+  local_only: true
+  allow_remote_llm: false
+
+the application must reject remote LLM endpoints.
+
+Examples of acceptable local endpoints:
+
+http://127.0.0.1:11434
+http://localhost:11434
+http://127.0.0.1:<port>
+
+The exact local endpoint must remain configurable.
+
+Do not hard-code a cloud provider.
+
+Do not silently fall back to a remote provider if the local model is unavailable.
+
+If the local LLM cannot be reached:
+
+Translation unavailable
+
+is preferable to silently sending the content elsewhere.
+
+⸻
+
+5. No Persistent Screenshot Storage
+
+The application must not create a screenshot archive as part of normal operation.
+
+Avoid directories such as:
+
+screenshots/
+captures/
+recordings/
+frames/
+
+unless they are explicitly part of a developer/debug mode.
+
+If a developer/debug capture mode exists, it must:
+
+1. Be explicitly enabled.
+2. Display a clear warning.
+3. Require deliberate user action.
+4. Never be enabled automatically in production mode.
+
+⸻
+
+6. OCR Data Retention
+
+OCR output should be treated differently from the original image.
+
+The system may temporarily maintain:
+
+{
+  "text": "今後のプロセス安全活動について",
+  "bbox": [420, 180, 780, 220],
+  "confidence": 0.97
+}
+
+for translation and overlay rendering.
+
+However, OCR data should not automatically become a permanent record.
+
+Retention should follow the session configuration.
+
+Recommended default:
+
+session:
+  retain_translation_events: true
+  retain_source_text: true
+  retain_bounding_boxes: false
+  retain_screenshots: false
+
+If session recording is disabled, OCR text should also be treated as temporary.
+
+⸻
+
+7. Session Recording Boundary
+
+Phase 15/16 introduced optional translation-session recording and Markdown summaries.
+
+This feature must remain explicitly user-controlled.
+
+A session summary may contain:
+
+# Translation Session
+## Japanese → English
+### Source
+今後のプロセス安全活動について
+### Translation
+Future Process Safety Activities
+
+The user must understand that enabling session recording means translated/source text may become persistent data.
+
+Therefore:
+
+session:
+  enabled: false
+
+should be a valid default.
+
+When enabled, store the session locally.
+
+Never upload the session automatically.
+
+⸻
+
+8. Confidentiality Considerations
+
+Local processing significantly reduces the risk of sending presentation content to an external AI service.
+
+However:
+
+Local processing does not automatically override an organization’s security, confidentiality, or acceptable-use policies.
+
+The application must therefore avoid claiming:
+
+"Company policy compliant"
+"Safe for confidential documents"
+"Legally safe"
+
+unless such claims are independently established.
+
+Instead, the application should describe itself as:
+
+Local-first and designed to minimize data exposure.
+
+For enterprise deployment, the organization may independently determine whether screen capture, OCR, local AI inference, and session recording are permitted.
+
+⸻
+
+9. Copyright / Intellectual Property Position
+
+Do not encode legal conclusions into the software.
+
+The product documentation may explain the intended technical use:
+
+The application translates content already visible to the user and is designed primarily as a real-time viewing/accessibility aid. It does not intentionally create or distribute a persistent copy of the underlying presentation.
+
+This is a product-design description, not a legal determination.
+
+Japanese copyright law contains a private-use reproduction provision under Article 30, subject to specified exceptions and conditions. The application must not claim that Article 30 universally authorizes screen capture or translation of every presentation. (Japanese Law Translation)
+
+The software should therefore focus on minimizing unnecessary reproduction rather than attempting to determine copyright ownership.
+
+⸻
+
+10. No DRM Circumvention
+
+The application must not attempt to bypass:
+
+* DRM
+* access controls
+* authentication
+* presentation protection mechanisms
+* encrypted content
+* technical protection measures
+
+The application operates on pixels that are already legitimately displayed on the user’s desktop.
+
+Do not implement functionality whose purpose is to defeat technical restrictions on copying.
+
+⸻
+
+11. No Redistribution Features
+
+Do not add features such as:
+
+Export translated PowerPoint
+Reconstruct translated slide deck
+Automatically publish translated slides
+Share captured presentation
+Upload presentation to translation service
+Generate downloadable copy of presentation
+
+unless such functionality becomes an explicitly authorized future product requirement.
+
+The core product is:
+
+VIEW → TRANSLATE → OVERLAY
+
+not:
+
+CAPTURE → RECONSTRUCT → DISTRIBUTE
+
+⸻
+
+12. Camera / Manual Workflow Equivalence
+
+Document the conceptual workflow without claiming legal equivalence.
+
+Users can already perform real-time translation through manual methods such as:
+
+Phone camera
+    ↓
+Image recognition
+    ↓
+OCR
+    ↓
+Translation
+
+or:
+
+Snipping Tool
+    ↓
+OCR
+    ↓
+Copy text
+    ↓
+Translator
+
+This application streamlines the same general user objective:
+
+Understand foreign-language content currently visible on the user’s screen.
+
+The distinguishing feature is that translation is spatially anchored directly to the source instead of requiring a second device or repeated manual operations.
+
+⸻
+
+13. Spatial Overlay Requirement
+
+The overlay must not unnecessarily obscure the source presentation.
+
+Placement priority:
+
+1. Below source text
+2. Above source text
+3. Right of source text
+4. Left of source text
+5. Controlled fallback placement
+
+The original content should remain readable whenever possible.
+
+The overlay should visually communicate:
+
+SOURCE
+TRANSLATION
+
+rather than replacing the source.
+
+⸻
+
+14. Privacy Indicator
+
+Provide a visible application status indicator.
+
+Example:
+
+● LOCAL
+
+or:
+
+● Local OCR
+● Local Qwen
+● No cloud connection
+
+When local-only mode is active, the user should be able to verify that the configured translation endpoint is local.
+
+Example status:
+
+Translation: Qwen3 4B
+Endpoint: localhost
+OCR: Local
+Screen storage: Disabled
+Telemetry: Disabled
+
+Do not expose API keys.
+
+⸻
+
+15. Emergency Privacy Stop
+
+Add a global pause/stop mechanism.
+
+Example:
+
+Ctrl + Shift + T
+
+Behavior:
+
+Capture → STOP
+OCR → STOP
+Translation → STOP
+Overlay → optionally remain visible or clear
+
+Preferably provide:
+
+STOP TRANSLATION
+
+as a clearly accessible UI control.
+
+This is particularly important when the user is unexpectedly shown confidential material.
+
+⸻
+
+16. Memory Cleanup
+
+When practical, release temporary frame/image objects after processing.
+
+Avoid retaining large image buffers unnecessarily.
+
+The pipeline should prefer:
+
+latest frame
+
+over:
+
+all historical frames
+
+Translation queues must not grow indefinitely.
+
+If processing falls behind:
+
+discard stale frame
+process latest meaningful frame
+
+rather than processing an increasingly outdated presentation state.
+
+⸻
+
+17. Production Safety Requirements
+
+Before Phase 19 is considered complete:
+
+* [ ]	No screenshot persistence by default.
+* [ ]	No audio persistence by default.
+* [ ]	No telemetry.
+* [ ]	No automatic cloud fallback.
+* [ ]	Remote LLM rejected when local-only mode is enabled.
+* [ ]	Local endpoint clearly visible in status/settings.
+* [ ]	Session recording explicitly controllable.
+* [ ]	Temporary frames are released after processing.
+* [ ]	Translation queue cannot grow without bound.
+* [ ]	Stale frames can be discarded.
+* [ ]	Emergency translation pause exists.
+* [ ]	No DRM/access-control circumvention.
+* [ ]	No automatic presentation reconstruction.
+* [ ]	No automatic redistribution.
+* [ ]	Documentation avoids unsupported legal claims.
+
+⸻
+
+18. Automated Tests
+
+Add tests for:
+
+Privacy configuration
+
+local_only = true
+allow_remote_llm = false
+
+must reject:
+
+https://api.example.com
+
+Screenshot retention
+
+Normal processing must not create persistent screenshot files.
+
+Session recording
+
+Disabled:
+
+session.enabled = false
+
+must not create a persistent translation session.
+
+Queue behavior
+
+When the translation queue exceeds its configured limit:
+
+discard stale work
+retain latest relevant work
+
+Emergency stop
+
+Activating the stop command must prevent new capture/OCR/translation jobs.
+
+Endpoint validation
+
+Local endpoint accepted:
+
+http://127.0.0.1:11434
+
+Remote endpoint rejected when local-only mode is active.
+
+⸻
+
+19. Documentation Update
+
+Update:
+
+README.md
+PROJECT_SPEC.md
+ARCHITECTURE.md
+IMPLEMENTATION_REPORT.md
+
+with a concise product identity statement:
+
+This application is a local-first spatial translation layer for Windows. It observes content already visible on the user’s display, performs OCR and translation locally, and renders the translation as a spatial overlay while minimizing persistent reproduction of the underlying content.
+
+Do not describe the product as:
+
+HeyClicky clone
+HeyClicky replacement
+PowerPoint scraper
+Presentation copier
+Screen recorder
+
+The product is its own standalone application.
+
+⸻
+
+20. Definition of Done
+
+Phase 19 is complete when:
+
+1. The application defaults to local-only processing.
+2. Remote endpoints cannot be silently used.
+3. Screenshots are not persistently stored during normal operation.
+4. OCR/translation processing uses ephemeral visual data wherever practical.
+5. Session recording is explicitly opt-in.
+6. Users can immediately stop translation/capture.
+7. Translation queues discard stale work instead of accumulating indefinitely.
+8. No DRM/access-control circumvention exists.
+9. No presentation redistribution functionality exists.
+10. Documentation accurately describes the application as a real-time local translation/accessibility layer.
+11. Documentation does not make unsupported claims of legal or company-policy compliance.
+12. Automated tests cover the privacy and retention requirements.
+
+⸻
+
+Final Principle
+
+The application should follow this principle:
+
+See it → understand it → translate it → discard the unnecessary source data.
+
+The objective is not to own, archive, reproduce, or redistribute the presentation.
+
+The objective is to make foreign-language content that the user is already viewing understandable in real time.
