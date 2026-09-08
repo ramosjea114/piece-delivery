@@ -1,0 +1,224 @@
+Phase 18 — Final End-to-End Validation
+
+Objective
+
+Perform a complete validation of the application.
+
+This phase is verification and bug fixing, not a redesign.
+
+Read
+
+Read:
+
+* PROJECT_SPEC.md
+* ARCHITECTURE.md
+* PROJECT_STATE.md
+* all relevant source code
+* test suite
+
+Functional Test
+
+Verify:
+
+Windows Desktop
+      ↓
+Screen Capture
+      ↓
+Change Detection
+      ↓
+Frame Stabilization
+      ↓
+Local OCR
+      ↓
+Text Grouping
+      ↓
+Language Detection
+      ↓
+Translation Cache
+      ↓
+Local Qwen
+      ↓
+Structured Translation
+      ↓
+Smart Placement
+      ↓
+Overlay
+      ↓
+Session Recording
+      ↓
+Markdown Summary
+
+Test Scenarios
+
+Scenario 1 — Japanese PowerPoint
+
+Open a Japanese PowerPoint presentation.
+
+Verify:
+
+* text is detected
+* source bounding boxes are reasonable
+* English translation appears near source
+* original slide remains visible
+
+Scenario 2 — English → Japanese
+
+Verify bidirectional translation.
+
+Scenario 3 — Repeated Text
+
+Display identical text for an extended period.
+
+Verify Qwen is not repeatedly called.
+
+Scenario 4 — Slide Change
+
+Change slides.
+
+Verify the system detects the change and updates translations.
+
+Scenario 5 — Qwen Offline
+
+Stop the local LLM server.
+
+Verify:
+
+* application does not crash
+* user receives a useful status/error
+* GUI remains responsive
+
+Scenario 6 — Multiple Monitors
+
+Test if hardware is available.
+
+Verify:
+
+* correct monitor capture
+* correct overlay placement
+* negative coordinates handled
+
+Scenario 7 — Windows DPI
+
+Test at multiple scaling values if possible.
+
+Verify overlay alignment.
+
+Scenario 8 — Session Summary
+
+Run a session and generate Markdown.
+
+Verify the Markdown is readable and accurate.
+
+Privacy Audit
+
+Verify that the application does not:
+
+* upload screenshots
+* upload OCR results except explicitly to the configured local LLM endpoint
+* use cloud OCR
+* use cloud translation
+* send telemetry
+* expose API keys in logs
+* store screenshots by default
+
+Performance Audit
+
+Record:
+
+* average detection latency
+* OCR latency
+* translation latency
+* cache hit behavior
+* overlay latency
+* end-to-end perceived latency
+
+Code Quality
+
+Check for:
+
+* dead code
+* duplicated logic
+* hard-coded configuration
+* blocking GUI operations
+* exception swallowing
+* unnecessary dependencies
+* unsafe credential handling
+
+Fix only issues that are justified.
+
+Do not perform a large architectural rewrite unless required to pass validation.
+
+Final Documentation
+
+Create or update:
+
+IMPLEMENTATION_REPORT.md
+
+It must contain:
+
+1. What Was Built
+
+Concise architecture summary.
+
+2. Current Features
+
+List implemented functionality.
+
+3. Configuration
+
+Give the user the exact configuration file path.
+
+Give the exact fields for:
+
+llm:
+  base_url: "..."
+  api_key: "..."
+  model: "..."
+
+Include a safe example.
+
+Never print or invent a real API key.
+
+4. Local Qwen Setup
+
+Explain how to configure the local OpenAI-compatible endpoint.
+
+Example:
+
+llm:
+  base_url: "http://127.0.0.1:11434/v1"
+  api_key: ""
+  model: "qwen3:4b"
+
+5. Startup
+
+Provide the exact command required to run the application.
+
+6. Testing
+
+Provide the exact test command.
+
+7. Packaging
+
+Provide the exact build command.
+
+8. Known Limitations
+
+Be honest.
+
+9. Recommended Next Steps
+
+Only include genuinely useful improvements.
+
+Final State
+
+Update PROJECT_STATE.md with:
+
+* completed phases
+* current version/state
+* tests passed
+* known issues
+* configuration location
+* next development opportunities
+
+Do not claim a feature works unless it was actually tested.
