@@ -1,0 +1,91 @@
+Phase 02 — Screen Change Detection
+
+Read First
+
+Read:
+
+* PROJECT_SPEC.md
+* ARCHITECTURE.md
+* PROJECT_STATE.md
+* existing capture implementation
+
+Objective
+
+Implement efficient detection of meaningful visual changes.
+
+Pipeline:
+
+Captured Frame
+      ↓
+Downscale
+      ↓
+Grayscale
+      ↓
+Blur
+      ↓
+Frame Difference
+      ↓
+Threshold
+      ↓
+Changed Pixel Ratio
+      ↓
+Meaningful Change?
+
+Requirements
+
+Create:
+
+detection/
+└── change_detector.py
+
+Support configurable:
+
+* analysis resolution
+* threshold
+* minimum changed-pixel ratio
+* blur strength
+
+The detector should not compare full-resolution images when unnecessary.
+
+Output
+
+Return structured information such as:
+
+{
+    "changed": True,
+    "change_ratio": 0.0731
+}
+
+Use a typed structure if appropriate.
+
+Important
+
+Do not trigger OCR here.
+
+Do not trigger translation.
+
+Do not create overlays.
+
+This component only answers:
+
+Has the screen changed enough to justify further processing?
+
+Tests
+
+Create deterministic tests using synthetic images.
+
+Test:
+
+1. identical frames
+2. tiny change
+3. large change
+4. completely different frames
+5. threshold behavior
+
+Completion
+
+Run all relevant tests.
+
+Update PROJECT_STATE.md.
+
+Do not proceed to stabilization automatically.
