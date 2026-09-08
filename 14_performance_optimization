@@ -1,0 +1,102 @@
+Phase 14 — Performance Optimization
+
+Objective
+
+Optimize the complete pipeline only after functionality works.
+
+Do not sacrifice correctness for benchmark numbers.
+
+Target Architecture
+
+Screen
+ ↓
+~3 FPS analysis
+ ↓
+cheap frame difference
+ ↓
+meaningful change?
+ ↓
+stabilization
+ ↓
+OCR only when needed
+ ↓
+grouping
+ ↓
+cache
+ ↓
+Qwen only for uncached text
+ ↓
+overlay
+
+Optimize
+
+Capture
+
+Avoid unnecessary high-frequency full-resolution processing.
+
+Change Detection
+
+Use downscaled grayscale images.
+
+OCR
+
+Never OCR every frame unless explicitly configured for debugging.
+
+Translation
+
+Never translate identical text repeatedly.
+
+Overlay
+
+Update only changed regions.
+
+GUI
+
+Never block the Qt main thread.
+
+Instrumentation
+
+Add local timing metrics:
+
+* capture time
+* change detection time
+* stabilization time
+* OCR time
+* cache lookup time
+* LLM latency
+* overlay update time
+* end-to-end latency
+
+Do not send metrics anywhere.
+
+Logging
+
+Use configurable local logging.
+
+Avoid logging:
+
+* screenshots
+* API keys
+* sensitive presentation content by default
+
+Tests
+
+Ensure optimization does not break existing tests.
+
+Perform a basic live benchmark if possible.
+
+Target
+
+Aim for approximately:
+
+1–2 seconds perceived translation latency
+
+but do not claim this target is guaranteed.
+
+Completion
+
+Run regression tests.
+
+Update PROJECT_STATE.md.
+
+Document observed performance and bottlenecks.
