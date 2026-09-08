@@ -1,0 +1,116 @@
+Phase 04 — Local OCR
+
+Read First
+
+Read:
+
+* PROJECT_SPEC.md
+* ARCHITECTURE.md
+* PROJECT_STATE.md
+
+Inspect existing capture and stabilization modules.
+
+Objective
+
+Add local OCR capable of recognizing Japanese and English text while preserving bounding boxes.
+
+Pipeline:
+
+Stable Frame
+     ↓
+Local OCR
+     ↓
+Text Regions
+     ↓
+text + bbox + confidence
+
+Privacy
+
+OCR must run locally.
+
+Do not use:
+
+* Google OCR
+* Azure OCR
+* AWS Textract
+* cloud OCR APIs
+* remote OCR endpoints
+
+Do not upload screenshots.
+
+Architecture
+
+Create:
+
+ocr/
+├── ocr_engine.py
+└── models.py
+
+Use an OCR implementation that can run locally.
+
+Keep the OCR engine behind an interface.
+
+The rest of the application must not depend directly on a specific OCR vendor.
+
+OCR Result
+
+Represent each result approximately as:
+
+{
+  "id": "region_001",
+  "text": "今後のプロセス安全活動について",
+  "bbox": [420, 180, 780, 220],
+  "confidence": 0.97
+}
+
+Coordinates must be clearly documented.
+
+Use a consistent coordinate system.
+
+Languages
+
+Initial target:
+
+* Japanese
+* English
+
+The implementation should allow additional languages later.
+
+Debug Visualization
+
+Provide a development/debug mode capable of showing OCR bounding boxes.
+
+Example:
+
+今後のプロセス安全活動について
+└────────────── OCR REGION
+
+Do not build the final translation overlay yet.
+
+Tests
+
+Test:
+
+* result schema
+* coordinate validity
+* confidence filtering
+* empty OCR results
+* malformed engine output
+
+If the OCR engine is difficult to execute in CI, create a mock engine for automated tests.
+
+Important
+
+Do not automatically download large models at runtime.
+
+Document required local OCR model installation separately.
+
+Completion
+
+Run tests.
+
+Perform at least one real local OCR test if the environment permits.
+
+Update PROJECT_STATE.md.
+
+Do not implement translation.
