@@ -1,0 +1,70 @@
+Phase 16 — Session Markdown Summary
+
+Objective
+
+Generate a local Markdown summary from recorded translation events.
+
+Requirements
+
+Create:
+
+session/
+└── summary_generator.py
+
+Output:
+
+session_exports/
+└── session_YYYYMMDD_HHMMSS.md
+
+Basic Format
+
+# Presentation Session
+Date: YYYY-MM-DD
+Duration: ...
+## Key Topics
+...
+## Translations
+| Japanese | English |
+|---|---|
+| ... | ... |
+## Technical Terminology
+...
+## Notes
+...
+
+Important
+
+The summary must be generated from locally recorded session information.
+
+Do not send the entire session to a cloud service.
+
+If an LLM is used to summarize, it must use the same configurable local LLM architecture.
+
+Summary Behavior
+
+Avoid inventing information.
+
+Clearly distinguish:
+
+* observed translations
+* inferred topics
+* generated summaries
+
+Tests
+
+Test:
+
+* empty session
+* one event
+* multiple events
+* duplicate events
+* Markdown escaping
+* file generation
+
+Completion
+
+Run tests.
+
+Generate a sample Markdown session.
+
+Update PROJECT_STATE.md.
