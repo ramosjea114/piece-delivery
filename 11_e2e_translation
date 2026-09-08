@@ -1,0 +1,108 @@
+Phase 11 — End-to-End Translation Pipeline
+
+Objective
+
+Connect the already-tested components.
+
+Do not redesign existing modules unless necessary.
+
+Pipeline
+
+Screen Capture
+      ↓
+Change Detection
+      ↓
+Frame Stabilization
+      ↓
+OCR
+      ↓
+Text Grouping
+      ↓
+Normalization
+      ↓
+Language Detection
+      ↓
+Translation Cache
+      ↓
+Local Qwen
+      ↓
+Structured Translation
+      ↓
+Spatial Placement
+      ↓
+Overlay
+
+Architecture
+
+Create a pipeline coordinator, keeping individual components modular.
+
+Do not place the entire implementation inside main.py.
+
+Async / Responsiveness
+
+The GUI must not freeze while:
+
+* capturing
+* OCR is running
+* HTTP requests are running
+* translations are being processed
+
+Use appropriate worker threads, Qt signals, queues, or another clean mechanism.
+
+Deduplication
+
+Do not repeatedly process unchanged OCR regions.
+
+A region should only trigger translation when its meaningful text changes.
+
+Failure Handling
+
+If:
+
+* OCR fails → application continues.
+* Qwen unavailable → overlay remains functional and status reports the problem.
+* translation fails → retain source text and log a local error.
+* overlay fails for one region → other regions continue.
+
+Performance
+
+Initial target:
+
+capture analysis ≈ 3 FPS
+
+Do not OCR every captured frame.
+
+Do not translate every captured frame.
+
+Testing
+
+Create integration tests using mocked:
+
+* capture
+* OCR
+* Qwen
+* overlay
+
+Verify the complete logical flow without requiring real GUI rendering.
+
+Manual Test
+
+If environment permits:
+
+1. Open a Japanese presentation.
+2. Change slide.
+3. Wait for stabilization.
+4. OCR text.
+5. Translate.
+6. Display translation.
+7. Confirm original content remains visible.
+
+Completion
+
+Run all tests.
+
+Perform an end-to-end manual test if possible.
+
+Update PROJECT_STATE.md.
+
+This is the first milestone that should be considered an MVP.
