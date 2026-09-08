@@ -49,3 +49,200 @@ Do not implement OCR, translation, overlay, or the full pipeline yet.
 
 Run a basic application startup test before finishing.
 Update PROJECT_STATE.md with what was actually created.
+
+Phase 00 — Project Foundation
+
+Role
+
+You are implementing the foundation of a Windows-first, local-only bilingual AI screen translation application.
+
+This application is inspired by the interaction concept of HeyClicky, but it is an independent application. Do not copy HeyClicky’s implementation, branding, assets, proprietary code, or design.
+
+The application translates visible Japanese ↔ English desktop content and eventually displays the translation as a spatially anchored overlay near the original text.
+
+Core Principles
+
+* Windows 10/11 x64.
+* Python 3.11+.
+* Local-first.
+* No cloud OCR.
+* No cloud translation.
+* No telemetry.
+* No analytics.
+* No remote screenshot storage.
+* No automatic upload of screenshots.
+* LLM endpoint must be configurable.
+* Initial LLM target: Qwen3:4B.
+* LLM communication must support an OpenAI-compatible local HTTP API.
+* Architecture must allow Ollama, llama.cpp server, LM Studio, vLLM, or another compatible local server later.
+* Do not hard-code credentials.
+* Do not download models automatically at runtime.
+
+Initial Technology Stack
+
+Use:
+
+* Python 3.11+
+* PySide6
+* OpenCV
+* NumPy
+* mss
+* Pillow
+* httpx
+* PyYAML
+* SQLite
+* pytest
+
+OCR must be implemented behind an interface so the engine can be replaced later.
+
+Create
+
+Create this initial structure:
+
+project/
+├── app/
+│   ├── __init__.py
+│   └── main.py
+├── config/
+│   └── config.example.yaml
+├── capture/
+├── detection/
+├── ocr/
+├── translation/
+├── overlay/
+├── session/
+├── ui/
+├── utils/
+├── tests/
+├── PROJECT_SPEC.md
+├── ARCHITECTURE.md
+├── PROJECT_STATE.md
+├── requirements.txt
+├── .gitignore
+└── README.md
+
+Keep empty modules minimal. Do not prematurely implement future functionality.
+
+Configuration
+
+Create an example configuration containing:
+
+llm:
+  base_url: "http://127.0.0.1:11434/v1"
+  api_key: ""
+  model: "qwen3:4b"
+  temperature: 0
+  max_tokens: 1000
+  timeout: 60
+translation:
+  source_language: "auto"
+  target_language: "en"
+  style: "technical"
+capture:
+  fps: 3
+  monitor: 1
+overlay:
+  enabled: true
+  font_size: 24
+
+The real configuration file must not be committed.
+
+Documentation
+
+Create:
+
+PROJECT_SPEC.md
+
+Describe:
+
+* purpose
+* target users
+* supported languages
+* privacy requirements
+* major features
+* non-goals
+* technology constraints
+* definition of done
+
+ARCHITECTURE.md
+
+Describe the intended pipeline:
+
+Screen
+ ↓
+Capture
+ ↓
+Change Detection
+ ↓
+Frame Stabilization
+ ↓
+OCR
+ ↓
+Text Grouping
+ ↓
+Language Detection
+ ↓
+Translation Cache
+ ↓
+Local Qwen
+ ↓
+Structured Translation
+ ↓
+Spatial Placement
+ ↓
+Overlay
+ ↓
+Session Event Store
+ ↓
+Markdown Summary
+
+Do not implement all of these yet.
+
+PROJECT_STATE.md
+
+Record:
+
+* current phase
+* completed work
+* files created
+* tests executed
+* known issues
+* configuration information
+* next recommended phase
+
+Keep this file concise.
+
+Application
+
+Create a minimal PySide6 application proving that:
+
+1. Python environment works.
+2. PySide6 loads.
+3. Application starts.
+4. Main window appears.
+5. Application exits cleanly.
+
+Do not implement OCR, translation, screen capture, overlay, or LLM functionality yet.
+
+Testing
+
+Create at least one startup test.
+
+Run the test.
+
+Do not claim success unless the test actually passes.
+
+Completion Criteria
+
+This phase is complete only when:
+
+* project structure exists
+* configuration example exists
+* documentation exists
+* .gitignore protects real configuration
+* application starts
+* startup test passes
+* PROJECT_STATE.md is updated
+
+Do not continue into Phase 01 automatically.
+
