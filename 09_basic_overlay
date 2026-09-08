@@ -1,0 +1,89 @@
+Phase 09 — Basic Spatial Translation Overlay
+
+Objective
+
+Display translated text directly on the Windows desktop near the source text.
+
+Read First
+
+Read:
+
+* PROJECT_SPEC.md
+* ARCHITECTURE.md
+* PROJECT_STATE.md
+
+Requirements
+
+Create:
+
+overlay/
+├── overlay_window.py
+└── overlay_renderer.py
+
+Use PySide6.
+
+The overlay should:
+
+* be transparent
+* have no unnecessary window chrome
+* be visually readable
+* not interfere with the underlying application
+* support click-through behavior where practical
+* support multiple translation regions
+
+Initial Placement
+
+For this milestone only:
+
+source bbox
+     ↓
+translation
+     ↓
+place below source
+
+Use a configurable gap.
+
+Do not build sophisticated placement yet.
+
+Example
+
+Source:
+
+今後のプロセス安全活動について
+
+Overlay:
+
+Future Process Safety Activities
+
+The translation should appear spatially adjacent to the source.
+
+Coordinate System
+
+Clearly define:
+
+* screen coordinates
+* monitor coordinates
+* overlay coordinates
+
+Do not assume a single-monitor environment.
+
+Tests
+
+Test geometry conversion separately from actual GUI rendering.
+
+Test:
+
+* basic placement
+* screen boundary clamping
+* empty translation
+* multiple regions
+
+Completion
+
+Run tests.
+
+Perform a manual visual test if possible.
+
+Update PROJECT_STATE.md.
+
+Do not implement advanced placement.
