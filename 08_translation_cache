@@ -1,0 +1,72 @@
+Phase 08 — Translation Cache
+
+Objective
+
+Prevent repeated translation of identical text.
+
+Pipeline
+
+OCR text
+   ↓
+Normalize
+   ↓
+Hash
+   ↓
+Cache lookup
+ ┌──┴──┐
+HIT   MISS
+ ↓      ↓
+use    Qwen
+        ↓
+      cache
+
+Requirements
+
+Create:
+
+translation/
+└── translation_cache.py
+
+Cache key must include at minimum:
+
+* normalized source text
+* source language
+* target language
+* translation style
+* glossary version
+
+Hash the resulting key using SHA-256.
+
+Storage
+
+Use SQLite or another local persistent mechanism.
+
+The cache must remain local.
+
+Behavior
+
+Identical translation requests should not call Qwen again.
+
+Changing target language must create a different cache entry.
+
+Changing style must create a different cache entry.
+
+Changing glossary version must invalidate previous results.
+
+Tests
+
+Test:
+
+* cache miss
+* cache hit
+* persistence
+* different language
+* different style
+* different glossary version
+* normalization
+
+Completion
+
+Run tests.
+
+Update PROJECT_STATE.md.
