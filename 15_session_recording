@@ -1,0 +1,70 @@
+Phase 15 — Local Session Event Store
+
+Objective
+
+Record translation events locally so the session can later produce a Markdown summary.
+
+Requirements
+
+Use SQLite.
+
+Create:
+
+session/
+├── session_store.py
+└── session_events.py
+
+Record events such as:
+
+{
+  "timestamp": "2026-09-08T10:30:00",
+  "source_language": "ja",
+  "target_language": "en",
+  "source": "プロセス安全",
+  "translation": "Process Safety"
+}
+
+Privacy
+
+Do not store screenshots by default.
+
+Do not store audio by default.
+
+Do not upload session data.
+
+Everything remains local.
+
+Session Lifecycle
+
+Support:
+
+Start Session
+      ↓
+Translation Events
+      ↓
+Stop Session
+      ↓
+Persist
+
+Deduplication
+
+Do not create thousands of duplicate events for the same unchanged text.
+
+Record meaningful translation events.
+
+Tests
+
+Test:
+
+* session creation
+* event insertion
+* retrieval
+* timestamps
+* duplicate handling
+* session closure
+
+Completion
+
+Run tests.
+
+Update PROJECT_STATE.md.
