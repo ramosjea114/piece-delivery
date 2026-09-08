@@ -1,0 +1,99 @@
+Phase 06 — Local Qwen Connection
+
+Objective
+
+Connect the application to a configurable OpenAI-compatible local LLM endpoint.
+
+Initial model:
+
+qwen3:4b
+
+Possible providers:
+
+* Ollama
+* llama.cpp server
+* LM Studio
+* vLLM
+* other OpenAI-compatible local servers
+
+Configuration
+
+Use:
+
+llm:
+  base_url: "http://127.0.0.1:11434/v1"
+  api_key: ""
+  model: "qwen3:4b"
+  temperature: 0
+  max_tokens: 1000
+  timeout: 60
+
+Never hard-code a real API key.
+
+Never commit credentials.
+
+Implement
+
+Create:
+
+translation/
+├── llm_client.py
+└── translator.py
+
+The client must support:
+
+* configurable endpoint
+* configurable API key
+* configurable model
+* timeout
+* HTTP error handling
+* connection failure handling
+* clean response extraction
+
+First Test
+
+Implement a simple translation call:
+
+Input:
+
+プロセス安全
+
+Expected semantic output:
+
+Process Safety
+
+Do not require exact wording if the model naturally produces equivalent terminology.
+
+Important
+
+The client must not:
+
+* upload screenshots
+* use cloud OCR
+* send unnecessary metadata
+* include local filesystem contents
+
+Only explicitly supplied text should be sent to the LLM.
+
+Tests
+
+Use mocked HTTP responses.
+
+Test:
+
+* successful request
+* timeout
+* HTTP error
+* malformed response
+* missing configuration
+* empty API key
+
+If a live Qwen endpoint is available, document how to test it manually.
+
+Completion
+
+Run tests.
+
+Update PROJECT_STATE.md.
+
+Do not yet integrate OCR with Qwen.
